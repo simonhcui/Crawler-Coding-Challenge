@@ -17,6 +17,10 @@ This submission makes use of the Wikipedia Python API (https://github.com/martin
 At first I approached this challenge intending to use the BeautifulSoup Python library. However, I then found out that there already exists an official Wikipedia API. 
 I believe it makes more sense to use the direct API if available rather than manual screen-scraping.
 
+3rd party libraries that need to be installed before running:
+pip install wikipedia-api
+pip install prettytable
+
 This application takes in two form of arguments on the console. 
 An integer will configure the number of words to return. Only one integer can be supplied as an argument.
 Alphabetical strings will configure which words to exclude from the search.
