@@ -7,7 +7,6 @@ from prettytable import PrettyTable
 # Takes in a WikipediaPageSection
 # Counts every word occurence in individual Wikipedia Sections
 def word_count(section_text, word_dict):
-
     # Parse the text by removing all punctuation and spaces
     no_punctuation = section_text.translate(str.maketrans('', '', string.punctuation))
     no_space = no_punctuation.split()
@@ -33,28 +32,21 @@ def parse_arguments():
     return num_words, excluded_words
 
 
-def main(num_words, excluded_words):  
-    wiki_wiki = wikipediaapi.Wikipedia('en')
-    page_py = wiki_wiki.page('Microsoft')
-    
-    if(not page_py.exists()):
-        print("Missing Wikipedia Page, please check line 38 of source code")
-        quit()
-        
-    section_history = page_py.section_by_title('History')
-
+def count_words(section_history):
     # k, v
     # word, number of occurrences
     word_dict = dict()
-
-    my_table = PrettyTable()
-    my_table.field_names = ["Word", "# of occurrences"]
 
     # Count all word occurrences in all subsections of the 'History' section
     for s in section_history.sections:
         word_count(s.text, word_dict)
 
-    ordered_frequency = OrderedDict(sorted(word_dict.items(), key=lambda kv: kv[1], reverse=True))
+    return OrderedDict(sorted(word_dict.items(), key=lambda kv: kv[1], reverse=True))
+
+
+def generate_table(ordered_frequency):
+    my_table = PrettyTable()
+    my_table.field_names = ["Word", "# of occurrences"]
 
     num_printed = 0
     for k, v in list(ordered_frequency.items()):
@@ -64,11 +56,22 @@ def main(num_words, excluded_words):
             my_table.add_row([k, v])
             num_printed += 1
 
-    print(my_table)
+    return my_table
+
+
+def main(num_words, excluded_words):  
+    wiki_wiki = wikipediaapi.Wikipedia('en')
+    page_py = wiki_wiki.page('Microsoft')
+    
+    if(not page_py.exists()):
+        print("Missing Wikipedia Page, please check line 64 of source code")
+        quit()
+        
+    section_history = page_py.section_by_title('History')
+    ordered_frequency = count_words(section_history)
+    print(generate_table(ordered_frequency))
+
 
 if __name__ == "__main__":
     num_words, excluded_words = parse_arguments()
     main(num_words, excluded_words)
-
-
-
